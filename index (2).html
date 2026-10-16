@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Línea del Tiempo · Tecnologías de la Información</title>
+<style>
+  :root{
+    --bg1:#0b0e1a; --bg2:#1b1240; --bg3:#0e2140;
+    --text:#f4f7ff; --muted:#cfd8f0;
+    --accent:#ffd78a; --accent2:#f5b87e;
+    --card:rgba(18,16,46,0.88);
+    --border:rgba(255,215,140,0.6);
+    --btn-bg:rgba(255,255,255,0.10);
+    --btn-text:#fff1d6;
+    --pill-bg:linear-gradient(135deg,#ffe3ae,#ffb98a);
+    --pill-text:#1c1408;
+    --focus:#ffffff;
+    --danger-text:#ffc4c4; --danger-border:rgba(255,140,140,0.7);
+    --edit-bg:rgba(255,215,140,0.14);
+
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+    font-size:100%;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  *,*::before,*::after{box-sizing:inherit;margin:0;padding:0;}
+  [hidden]{display:none !important;}
+
+  /* Alto contraste: negro, blanco y amarillo */
+  :root[data-contrast="high"]{
+    --bg1:#000; --bg2:#000; --bg3:#000;
+    --text:#fff; --muted:#fff;
+    --accent:#ffff00; --accent2:#ffff00;
+    --card:#000; --border:#fff;
+    --btn-bg:#000; --btn-text:#fff;
+    --pill-bg:#ffff00; --pill-text:#000;
+    --focus:#00e5ff;
+    --danger-text:#ffb0b0; --danger-border:#ff9a9a;
+    --edit-bg:#1a1a00;
+  }
+
+  body{
+    min-height:100vh;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:1.125rem;
+    line-height:1.6;
+    color:var(--text);
+    background-color:var(--bg1);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(255,183,120,0.15), transparent 40%),
+      radial-gradient(circle at 80% 30%, rgba(120,80,255,0.20), transparent 45%),
+      radial-gradient(circle at 50% 90%, rgba(40,180,220,0.15), transparent 40%),
+      linear-gradient(160deg, var(--bg1), var(--bg2) 45%, var(--bg3));
+    background-size:200% 200%;
+    animation:bgshift 18s ease-in-out infinite;
+    padding-bottom:4rem;
+    overflow-x:hidden;
+    position:relative;
+  }
+  :root[data-contrast="high"] body{background-image:none;background-color:#000;animation:none;}
+  @keyframes bgshift{0%{background-position:0% 0%;}50%{background-position:100% 60%;}100%{background-position:0% 0%;}}
+
+  /* Enlace para saltar al contenido */
+  .skip{
+    position:absolute;left:-9999px;top:0;z-index:100;
+    background:var(--accent);color:#000;font-weight:700;
+    padding:.8rem 1.2rem;border-radius:0 0 12px 12px;text-decoration:none;
+  }
+  .skip:focus{left:1rem;}
+
+  /* Foco siempre visible */
+  :focus-visible{outline:3px solid var(--focus);outline-offset:3px;}
+
+  /* Destellos decorativos */
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .stars span{
+    position:absolute;width:3px;height:3px;background:var(--accent);
+    border-radius:50%;opacity:.5;animation:float 8s linear infinite;
+  }
+  @keyframes float{0%{transform:translateY(0) scale(1);opacity:.6;}100%{transform:translateY(-120vh) scale(.3);opacity:0;}}
+  :root[data-contrast="high"] .stars{display:none;}
+
+  header{position:relative;z-index:2;text-align:center;padding:2.4rem 1rem 1rem;max-width:48rem;margin:0 auto;}
+  .badge{
+    display:inline-block;font-size:.9rem;letter-spacing:.12em;color:var(--accent);
+    border:1px solid var(--border);padding:.35rem 1rem;border-radius:30px;
+    margin-bottom:1rem;background:rgba(255,215,140,0.08);
+  }
+  h1{
+    font-size:2.4rem;font-weight:800;line-height:1.15;color:var(--accent);
+  }
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    :root:not([data-contrast="high"]) h1{
+      background:linear-gradient(135deg,#fff5da,#ffd78a 40%,#ffb08e 75%,#d9b2ff);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+  }
+  .subhead{color:var(--muted);margin-top:.6rem;font-size:1.1rem;}
+
+  .toolbar{
+    display:flex;justify-content:center;gap:.6rem;margin-top:1.2rem;flex-wrap:wrap;align-items:center;
+  }
+  .toolbar-label{width:100%;font-size:.95rem;color:var(--muted);}
+
+  .btn{
+    font:inherit;font-weight:700;font-size:1rem;line-height:1.2;
+    min-height:2.75rem;min-width:2.75rem;
+    border:2px solid var(--border);background:var(--btn-bg);color:var(--btn-text);
+    padding:.55rem 1.1rem;border-radius:30px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;gap:.4rem;
+  }
+  .btn:hover{border-color:var(--accent);}
+  .btn[aria-pressed="true"]{background:var(--accent);color:#1c1408;border-color:var(--accent);}
+  .btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed;}
+  .btn.primary{background:linear-gradient(135deg,#ffd78a,#ff9d7a);color:#2a1b08;border-color:transparent;}
+  :root[data-contrast="high"] .btn.primary{background:#ffff00;color:#000;border-color:#fff;}
+  .btn.danger{border-color:var(--danger-border);color:var(--danger-text);background:rgba(255,90,90,0.12);}
+
+  .status{
+    min-height:1.6rem;margin-top:1rem;font-weight:600;color:var(--accent);
+  }
+  .notice{
+    margin:1rem auto 0;max-width:36rem;padding:.8rem 1rem;border:2px dashed var(--border);
+    border-radius:14px;background:var(--edit-bg);color:var(--text);font-size:1rem;text-align:left;
+  }
+
+  main{max-width:46rem;margin:0 auto;padding:1.6rem 1rem 0;position:relative;z-index:2;}
+  main:focus{outline:none;}
+
+  .era-header{display:flex;align-items:center;gap:.8rem;margin:2.6rem 0 1.2rem;}
+  .era-header:first-child{margin-top:0;}
+  .era-label{
+    font-size:1.05rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--accent);
+  }
+  .era-line{height:2px;flex:1;background:linear-gradient(90deg,var(--accent2),transparent);}
+  :root[data-contrast="high"] .era-line{background:#fff;}
+
+  .timeline{list-style:none;position:relative;padding-left:2rem;}
+  .timeline::before{
+    content:'';position:absolute;left:8px;top:0;bottom:0;width:3px;
+    background:linear-gradient(180deg,rgba(255,215,140,0.8),rgba(160,140,255,0.6),transparent);
+  }
+  :root[data-contrast="high"] .timeline::before{background:#fff;}
+
+  .tl-item{position:relative;margin-bottom:1.5rem;}
+  .tl-item::before{
+    content:'';position:absolute;left:-2rem;top:.5rem;width:18px;height:18px;border-radius:50%;
+    background:radial-gradient(circle,var(--accent),var(--accent2));
+    box-shadow:0 0 10px 2px rgba(255,215,140,0.6);
+  }
+  .tl-item.reveal{animation:reveal .6s ease both;}
+  @keyframes reveal{from{opacity:0;transform:translateY(16px);}}
+
+  .tl-date{
+    display:inline-block;font-weight:800;font-size:.95rem;color:var(--pill-text);
+    background:var(--pill-bg);padding:.25rem .9rem;border-radius:30px;margin-bottom:.5rem;
+  }
+  .tl-card{
+    background:var(--card);
+    -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+    border:2px solid var(--border);border-radius:18px;
+    padding:1rem 1.15rem;display:flex;gap:1rem;align-items:center;
+    box-shadow:0 8px 24px rgba(0,0,0,0.35);
+  }
+  .icon-badge{
+    width:3.5rem;height:3.5rem;flex-shrink:0;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;font-size:1.9rem;line-height:1;
+    background:linear-gradient(135deg,var(--icon1,#7a5cff),var(--icon2,#ff9d7a));
+    box-shadow:0 4px 14px rgba(0,0,0,0.4), inset 0 0 12px rgba(255,255,255,0.15);
+  }
+  .tl-text{flex:1;min-width:0;}
+  .tl-title{font-size:1.2rem;font-weight:700;line-height:1.3;color:var(--accent);}
+  .desc{display:block;color:var(--muted);font-size:1rem;margin-top:.2rem;}
+
+  .editable{display:inline-block;min-width:2ch;max-width:100%;padding:.1rem .35rem;border-radius:8px;
+    border:2px dashed var(--accent);background:var(--edit-bg);color:inherit;}
+  .tl-date .editable{color:var(--text);background:#2a1f0a;}
+  :root[data-contrast="high"] .tl-date .editable{background:#000;color:#fff;border-color:#000;}
+  .editable:empty::before{content:"(vacío)";opacity:.7;}
+
+  .edit-controls{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem;}
+  .edit-controls .btn{font-size:.95rem;min-height:2.75rem;padding:.4rem .9rem;border-radius:12px;}
+
+  .add-item{margin:1.6rem 0;text-align:center;}
+
+  footer{
+    position:relative;z-index:2;text-align:center;margin-top:3rem;color:var(--muted);
+    font-size:.95rem;padding:0 1rem;
+  }
+
+  /* Ventana de contraseña */
+  dialog{
+    margin:auto;border:2px solid var(--border);border-radius:22px;padding:1.8rem 1.5rem;
+    max-width:min(26rem,calc(100% - 2rem));width:100%;text-align:center;
+    background:#14103a;color:var(--text);box-shadow:0 20px 60px rgba(0,0,0,0.6);
+  }
+  :root[data-contrast="high"] dialog{background:#000;}
+  dialog::backdrop{background:rgba(6,8,16,0.8);}
+  dialog h2{font-size:1.35rem;color:var(--accent);margin-bottom:.5rem;}
+  dialog p{color:var(--muted);font-size:1rem;margin-bottom:1rem;}
+  dialog label{display:block;font-weight:700;margin-bottom:.4rem;text-align:left;}
+  dialog input{
+    width:100%;min-height:2.9rem;padding:.6rem 1rem;border-radius:12px;border:2px solid var(--border);
+    background:#0b0e1a;color:#fff;font:inherit;margin-bottom:.6rem;
+  }
+  .err{color:#ffb3b3;font-weight:700;min-height:1.6rem;margin-bottom:.4rem;text-align:left;}
+  :root[data-contrast="high"] .err{color:#ff9a9a;}
+  .modal-actions{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;}
+
+  /* Movimiento reducido (preferencia del sistema o botón) */
+  :root[data-motion="reduced"] *,
+  :root[data-motion="reduced"] *::before,
+  :root[data-motion="reduced"] *::after{animation:none !important;transition:none !important;}
+  :root[data-motion="reduced"] .stars{display:none;}
+
+  /* Modo de colores forzados de Windows */
+  @media (forced-colors:active){
+    h1{background:none !important;color:CanvasText !important;-webkit-text-fill-color:currentColor;}
+    .btn,.tl-card,.badge,.notice,dialog{border:2px solid CanvasText;}
+    .tl-date{border:1px solid CanvasText;}
+    .tl-item::before{background:Highlight;forced-color-adjust:none;}
+  }
+
+  @media (max-width:30rem){
+    h1{font-size:2rem;}
+    .tl-card{padding:.9rem;gap:.8rem;}
+    .icon-badge{width:3rem;height:3rem;font-size:1.6rem;}
+  }
+</style>
+</head>
+<body>
+
+<a class="skip" href="#mainArea">Saltar a la línea del tiempo</a>
+
+<div class="stars" aria-hidden="true"></div>
+
+<header>
+  <p class="badge"><span aria-hidden="true">✦</span> TI · Historia interactiva <span aria-hidden="true">✦</span></p>
+  <h1>Línea del Tiempo</h1>
+  <p class="subhead">Del papiro al smartphone: hitos de la información</p>
+
+  <div class="toolbar" role="group" aria-label="Opciones de visualización">
+    <span class="toolbar-label">Ver mejor la página</span>
+    <button type="button" class="btn" id="sizeDown" aria-label="Reducir tamaño del texto">A−</button>
+    <button type="button" class="btn" id="sizeUp" aria-label="Aumentar tamaño del texto">A+</button>
+    <button type="button" class="btn" id="contrastBtn" aria-pressed="false">Alto contraste</button>
+    <button type="button" class="btn" id="motionBtn" aria-pressed="false">Reducir movimiento</button>
+  </div>
+
+  <div class="toolbar" role="group" aria-label="Edición">
+    <button type="button" class="btn" id="loginBtn"><span aria-hidden="true">🔒</span> Editar</button>
+    <button type="button" class="btn danger" id="logoutBtn" hidden>Cerrar sesión</button>
+    <button type="button" class="btn primary" id="saveBtn" hidden><span aria-hidden="true">💾</span> Guardar cambios</button>
+  </div>
+
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+  <p class="notice" id="editHelp" hidden>Modo de edición activo. Selecciona cualquier texto con recuadro punteado para modificarlo, usa los botones de cada evento para moverlo o borrarlo, y pulsa «Guardar cambios» para conservar tu trabajo.</p>
+</header>
+
+<main id="mainArea" tabindex="-1">
+  <div id="timelineRoot"></div>
+  <div class="add-item" id="addWrap" hidden>
+    <button type="button" class="btn primary" id="addItemBtn">＋ Agregar evento</button>
+  </div>
+</main>
+
+<footer><p>Línea del Tiempo TI · Hecha con cariño</p></footer>
+
+<dialog id="loginModal" aria-labelledby="loginTitle" aria-describedby="loginDesc">
+  <form id="loginForm" autocomplete="off">
+    <h2 id="loginTitle">Acceso de edición</h2>
+    <p id="loginDesc">Escribe la contraseña para poder editar la línea del tiempo.</p>
+    <label for="pwInput">Contraseña</label>
+    <input type="password" id="pwInput" maxlength="20" aria-describedby="loginErr" autocomplete="off">
+    <div class="err" id="loginErr" role="alert"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn" id="cancelLogin">Cancelar</button>
+      <button type="submit" class="btn primary" id="confirmLogin">Entrar</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+/* ============ CONFIG ============ */
+// Cambia esta contraseña por la que quieras (solo es una barrera básica, no seguridad real).
+const EDIT_PASSWORD = "TI2026";
+const STORAGE_KEY = "ti_timeline_data_v1";
+const SESSION_KEY = "ti_timeline_editing";
+const PREF_KEY = "ti_timeline_prefs_v1";
+const SIZES = [100, 115, 130, 150, 175, 200];
+
+/* ============ ALMACENAMIENTO SEGURO ============ */
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } }
+function ssGet(k){ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }
+function ssSet(k,v){ try{ sessionStorage.setItem(k,v); }catch(e){} }
+function ssDel(k){ try{ sessionStorage.removeItem(k); }catch(e){} }
+function parse(s){ try{ return JSON.parse(s); }catch(e){ return null; } }
+
+/* ============ DATOS ============ */
+const defaultData = [
+ {era:"Antigüedad", date:"3500 a.C.", icon:"📜", g1:"#b8895a", g2:"#e8c78a", title:"Invención de la escritura", desc:"Mesopotamia · primer almacenamiento fuera de la memoria."},
+ {era:"Antigüedad", date:"3000 a.C.", icon:"🪨", g1:"#a17b52", g2:"#dcc192", title:"Tablillas de arcilla", desc:"Primer soporte masivo para registros."},
+ {era:"Antigüedad", date:"2300 a.C.", icon:"🧮", g1:"#c99a4f", g2:"#ffd98a", title:"Ábaco", desc:"Babilónico y chino · dispositivo de cálculo más antiguo."},
+ {era:"Antigüedad", date:"105 d.C.", icon:"📄", g1:"#d8c79a", g2:"#fff3d0", title:"Invención del papel", desc:"China · Cai Lun · difusión de la información."},
+ {era:"Edad Media", date:"1096–1291", icon:"🕊️", g1:"#8c9bb0", g2:"#d8e2f0", title:"Palomas mensajeras", desc:"Cruzadas · usadas por Ricardo Corazón de León."},
+ {era:"Edad Media", date:"1440", icon:"🖨️", g1:"#8c7b61", g2:"#e8d6ac", title:"Imprenta moderna", desc:"Gutenberg · tipos móviles · difusión masiva."},
+ {era:"Revolución Científica", date:"1671", icon:"⚙️", g1:"#a0835a", g2:"#e0c8a0", title:"Máquina multiplicadora", desc:"Gottfried Leibniz · cálculo mecánico."},
+ {era:"Revolución Industrial", date:"1712", icon:"🔥", g1:"#5a5c5e", g2:"#b6b8ba", title:"Máquina de vapor", desc:"Thomas Newcomen · bombeo en minas."},
+ {era:"Revolución Industrial", date:"1800", icon:"🔋", g1:"#d4b48a", g2:"#fff0d0", title:"Pila eléctrica", desc:"Corriente constante · primer dispositivo."},
+ {era:"Revolución Industrial", date:"1830", icon:"⚡", g1:"#6f7b8a", g2:"#c9d6e6", title:"Telégrafo", desc:"Transmisión de mensajes a larga distancia."},
+ {era:"Revolución Industrial", date:"1837", icon:"🧠", g1:"#545a66", g2:"#b7c4d6", title:"Máquina Analítica", desc:"Charles Babbage · diseño de computador programable."},
+ {era:"Era Eléctrica", date:"1876", icon:"📞", g1:"#5a6d7a", g2:"#c2d6e2", title:"Teléfono", desc:"Transmisión de voz a distancia."},
+ {era:"Era Eléctrica", date:"1895", icon:"📻", g1:"#4a5b6e", g2:"#b2c9d6", title:"Radio", desc:"Marconi · primeras transmisiones inalámbricas."},
+ {era:"Era Eléctrica", date:"1903", icon:"✈️", g1:"#738aa8", g2:"#dce8f4", title:"Primer vuelo controlado", desc:"Hermanos Wright · nace la aviación."},
+ {era:"Era Eléctrica", date:"1927", icon:"📺", g1:"#3a4555", g2:"#a8bcd0", title:"Primeras transmisiones de TV", desc:"Imágenes y sonido a distancia."},
+ {era:"Era Eléctrica", date:"1939", icon:"🎨", g1:"#495468", g2:"#b3c4de", title:"Televisión a color", desc:"Guillermo González Camarena · mexicano."},
+ {era:"Era de la Computación", date:"1943-45", icon:"💻", g1:"#3d4352", g2:"#a3b0c4", title:"ENIAC", desc:"Primera computadora · cálculo de balística."},
+ {era:"Era de la Computación", date:"1945", icon:"🗂️", g1:"#6c7a7d", g2:"#c4d4d4", title:"Memex", desc:"Vannevar Bush · visión de gestión de información."},
+ {era:"Era de la Computación", date:"1955", icon:"🔗", g1:"#72848f", g2:"#c8dbe6", title:"Fibra óptica", desc:"Kapany · telecomunicaciones de alta velocidad."},
+ {era:"Era de la Computación", date:"1956", icon:"🤖", g1:"#6a7d85", g2:"#c0d4d8", title:"Nacimiento de la IA", desc:"Conferencia de Dartmouth · Logic Theorist."},
+ {era:"Era de la Computación", date:"1958", icon:"🔬", g1:"#5f6b78", g2:"#c2d2e0", title:"Primer circuito integrado", desc:"Jack Kilby · semiconductores."},
+ {era:"Era de la Computación", date:"1962", icon:"🛰️", g1:"#394353", g2:"#a4b8d0", title:"Telstar", desc:"Primer satélite de comunicaciones activo."},
+ {era:"Era Digital", date:"1969", icon:"🌐", g1:"#3b4a5a", g2:"#a8c0d8", title:"ARPANET", desc:"Red precursora de Internet."},
+ {era:"Era Digital", date:"1971", icon:"🧩", g1:"#515769", g2:"#b0bfd6", title:"Intel 4004", desc:"Primer microprocesador comercial."},
+ {era:"Era Digital", date:"1972", icon:"🎮", g1:"#4a576b", g2:"#a8c4dc", title:"Magnavox Odyssey", desc:"Primera consola doméstica."},
+ {era:"Era Digital", date:"1982", icon:"👶", g1:"#c9915a", g2:"#ffd7a0", title:"Nacimiento de Víctor Manuel Chávez Pérez", desc:"7 de mayo."},
+ {era:"Era Digital", date:"1989", icon:"🕸️", g1:"#3d5266", g2:"#a8c8e6", title:"World Wide Web", desc:"Tim Berners-Lee · HTML, URL, HTTP."},
+ {era:"Era de Internet", date:"1999", icon:"📶", g1:"#3a4e62", g2:"#a0c4e0", title:"Wi-Fi 802.11b", desc:"Estándar de conexión inalámbrica."},
+ {era:"Era de Internet", date:"2000", icon:"💾", g1:"#3f5262", g2:"#a0c0da", title:"Memorias USB", desc:"Almacenamiento portátil."},
+ {era:"Era de Internet", date:"2004", icon:"🧬", g1:"#3c5060", g2:"#9ec4e0", title:"Grafeno", desc:"Aislado por Geim y Novoselov · ultrarresistente."},
+ {era:"Era de Internet", date:"2004", icon:"📘", g1:"#4b6173", g2:"#a8ccec", title:"Facebook", desc:"Mark Zuckerberg · nace la red social masiva."},
+ {era:"Era Móvil", date:"2007", icon:"📱", g1:"#394e5e", g2:"#a4c8ec", title:"iPhone", desc:"Apple · nace el smartphone moderno."}
+];
+
+let data = parse(lsGet(STORAGE_KEY));
+if(!Array.isArray(data) || !data.length) data = defaultData.map(d => Object.assign({}, d));
+let isEditing = ssGet(SESSION_KEY) === "1";
+
+/* ============ ELEMENTOS ============ */
+const $ = id => document.getElementById(id);
+const root = $('timelineRoot'), statusEl = $('status');
+const loginBtn = $('loginBtn'), logoutBtn = $('logoutBtn'), saveBtn = $('saveBtn');
+const addWrap = $('addWrap'), addBtn = $('addItemBtn'), editHelp = $('editHelp');
+const loginModal = $('loginModal'), loginForm = $('loginForm'), pwInput = $('pwInput'), loginErr = $('loginErr');
+const sizeUp = $('sizeUp'), sizeDown = $('sizeDown'), contrastBtn = $('contrastBtn'), motionBtn = $('motionBtn');
+
+function say(msg){ statusEl.textContent = ''; setTimeout(() => { statusEl.textContent = msg; }, 30); }
+
+/* ============ PREFERENCIAS DE VISUALIZACIÓN ============ */
+const saved = parse(lsGet(PREF_KEY)) || {};
+const prefs = {
+  size: Math.min(SIZES.length - 1, Math.max(0, parseInt(saved.size, 10) || 0)),
+  contrast: saved.contrast === true,
+  motion: typeof saved.motion === 'boolean' ? saved.motion : null
+};
+function applyPrefs(){
+  const de = document.documentElement;
+  de.style.fontSize = SIZES[prefs.size] + '%';
+  if(prefs.contrast) de.setAttribute('data-contrast', 'high'); else de.removeAttribute('data-contrast');
+  const reduced = prefs.motion === null ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : prefs.motion;
+  if(reduced) de.setAttribute('data-motion', 'reduced'); else de.removeAttribute('data-motion');
+  contrastBtn.setAttribute('aria-pressed', String(prefs.contrast));
+  motionBtn.setAttribute('aria-pressed', String(reduced));
+  sizeUp.setAttribute('aria-disabled', String(prefs.size >= SIZES.length - 1));
+  sizeDown.setAttribute('aria-disabled', String(prefs.size <= 0));
+}
+function savePrefs(){ lsSet(PREF_KEY, JSON.stringify(prefs)); }
+sizeUp.onclick = () => {
+  if(prefs.size >= SIZES.length - 1){ say('Ya está en el tamaño máximo.'); return; }
+  prefs.size++; applyPrefs(); savePrefs(); say('Texto al ' + SIZES[prefs.size] + ' por ciento.');
+};
+sizeDown.onclick = () => {
+  if(prefs.size <= 0){ say('Ya está en el tamaño mínimo.'); return; }
+  prefs.size--; applyPrefs(); savePrefs(); say('Texto al ' + SIZES[prefs.size] + ' por ciento.');
+};
+contrastBtn.onclick = () => {
+  prefs.contrast = !prefs.contrast; applyPrefs(); savePrefs();
+  say(prefs.contrast ? 'Alto contraste activado.' : 'Alto contraste desactivado.');
+};
+motionBtn.onclick = () => {
+  const now = document.documentElement.getAttribute('data-motion') === 'reduced';
+  prefs.motion = !now; applyPrefs(); savePrefs();
+  say(prefs.motion ? 'Movimiento reducido.' : 'Movimiento normal.');
+};
+applyPrefs();
+
+/* ============ RENDER ============ */
+function el(tag, cls, text){
+  const n = document.createElement(tag);
+  if(cls) n.className = cls;
+  if(text != null) n.textContent = text;
+  return n;
+}
+function editable(field, idx, label, value){
+  const s = el('span', null, value);
+  if(isEditing){
+    s.className = 'editable';
+    s.contentEditable = 'true';
+    s.setAttribute('role', 'textbox');
+    s.setAttribute('aria-label', label);
+    s.dataset.field = field;
+    s.addEventListener('input', () => { data[idx][field] = s.textContent.trim(); });
+    s.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); s.blur(); } });
+  }
+  return s;
+}
+function ctrlBtn(act, text, label, disabled){
+  const b = el('button', 'btn', text);
+  b.type = 'button';
+  b.dataset.act = act;
+  b.setAttribute('aria-label', label);
+  if(disabled) b.disabled = true;
+  return b;
+}
+
+let firstRender = true;
+function render(){
+  root.textContent = '';
+  let lastEra = null, list = null, eraCount = 0;
+  data.forEach((item, idx) => {
+    if(item.era !== lastEra){
+      lastEra = item.era;
+      eraCount++;
+      const header = el('div', 'era-header');
+      const h2 = el('h2', 'era-label', item.era);
+      h2.id = 'era-' + eraCount;
+      const line = el('span', 'era-line');
+      line.setAttribute('aria-hidden', 'true');
+      header.append(h2, line);
+      root.appendChild(header);
+      list = el('ol', 'timeline');
+      list.setAttribute('aria-labelledby', h2.id);
+      root.appendChild(list);
+    }
+    const li = el('li', 'tl-item' + (firstRender ? ' reveal' : ''));
+    li.dataset.index = idx;
+    if(firstRender) li.style.animationDelay = Math.min(idx * 0.03, 0.6) + 's';
+
+    const date = el('span', 'tl-date');
+    date.appendChild(editable('date', idx, 'Fecha del evento', item.date || ''));
+
+    const card = el('div', 'tl-card');
+    const badge = el('div', 'icon-badge', item.icon || '✨');
+    badge.setAttribute('aria-hidden', 'true');
+    if(item.g1) badge.style.setProperty('--icon1', item.g1);
+    if(item.g2) badge.style.setProperty('--icon2', item.g2);
+
+    const text = el('div', 'tl-text');
+    const h3 = el('h3', 'tl-title');
+    h3.appendChild(editable('title', idx, 'Título del evento', item.title || ''));
+    text.appendChild(h3);
+    if(item.desc || isEditing){
+      const p = el('p', 'desc');
+      p.appendChild(editable('desc', idx, 'Descripción del evento', item.desc || ''));
+      text.appendChild(p);
+    }
+    card.append(badge, text);
+    li.append(date, card);
+
+    if(isEditing){
+      const c = el('div', 'edit-controls');
+      c.setAttribute('role', 'group');
+      c.setAttribute('aria-label', 'Opciones del evento ' + item.title);
+      c.append(
+        ctrlBtn('up', '↑ Subir', 'Subir ' + item.title, idx === 0),
+        ctrlBtn('down', '↓ Bajar', 'Bajar ' + item.title, idx === data.length - 1),
+        ctrlBtn('icon', '🎨 Ícono', 'Cambiar ícono de ' + item.title, false),
+        ctrlBtn('del', '🗑️ Borrar', 'Borrar ' + item.title, false)
+      );
+      c.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => act(btn.dataset.act, idx)));
+      li.appendChild(c);
+    }
+    list.appendChild(li);
+  });
+  firstRender = false;
+}
+
+function focusControl(idx, act, fallback){
+  const q = n => root.querySelector('.tl-item[data-index="' + idx + '"] [data-act="' + n + '"]');
+  let b = q(act);
+  if(!b || b.disabled) b = (fallback && q(fallback)) || q('icon');
+  if(b) b.focus();
+}
+
+function act(a, idx){
+  const item = data[idx];
+  if(a === 'del'){
+    if(confirm('¿Borrar «' + item.title + '»?')){
+      data.splice(idx, 1);
+      render();
+      say('Evento borrado: ' + item.title + '.');
+      addBtn.focus();
+    }
+  } else if(a === 'up' && idx > 0){
+    [data[idx - 1], data[idx]] = [data[idx], data[idx - 1]];
+    render();
+    focusControl(idx - 1, 'up', 'down');
+    say(item.title + ' subió a la posición ' + idx + '.');
+  } else if(a === 'down' && idx < data.length - 1){
+    [data[idx + 1], data[idx]] = [data[idx], data[idx + 1]];
+    render();
+    focusControl(idx + 1, 'down', 'up');
+    say(item.title + ' bajó a la posición ' + (idx + 2) + '.');
+  } else if(a === 'icon'){
+    const ic = prompt('Nuevo emoji o ícono:', item.icon);
+    if(ic && ic.trim()){
+      data[idx].icon = ic.trim();
+      render();
+      focusControl(idx, 'icon');
+      say('Ícono actualizado.');
+    }
+  }
+}
+
+/* ============ INICIO DE SESIÓN / MODO EDICIÓN ============ */
+function updateEditUI(){
+  loginBtn.hidden = isEditing;
+  logoutBtn.hidden = !isEditing;
+  saveBtn.hidden = !isEditing;
+  addWrap.hidden = !isEditing;
+  editHelp.hidden = !isEditing;
+}
+
+loginBtn.onclick = () => {
+  pwInput.value = '';
+  loginErr.textContent = '';
+  if(typeof loginModal.showModal === 'function') loginModal.showModal(); else loginModal.setAttribute('open', '');
+  pwInput.focus();
+};
+function closeLogin(){
+  if(typeof loginModal.close === 'function') loginModal.close(); else loginModal.removeAttribute('open');
+}
+$('cancelLogin').onclick = () => { closeLogin(); loginBtn.focus(); };
+loginModal.addEventListener('cancel', () => { setTimeout(() => loginBtn.focus(), 0); });
+
+loginForm.addEventListener('submit', e => {
+  e.preventDefault();
+  if(pwInput.value === EDIT_PASSWORD){
+    isEditing = true;
+    ssSet(SESSION_KEY, '1');
+    closeLogin();
+    updateEditUI();
+    render();
+    say('Modo de edición activado.');
+    logoutBtn.focus();
+  } else {
+    loginErr.textContent = 'Contraseña incorrecta. Inténtalo de nuevo.';
+    pwInput.focus();
+    pwInput.select();
+  }
+});
+
+logoutBtn.onclick = () => {
+  isEditing = false;
+  ssDel(SESSION_KEY);
+  updateEditUI();
+  render();
+  say('Sesión cerrada. Modo de edición desactivado.');
+  loginBtn.focus();
+};
+
+saveBtn.onclick = () => {
+  const ok = lsSet(STORAGE_KEY, JSON.stringify(data));
+  const original = saveBtn.innerHTML;
+  if(ok){
+    saveBtn.textContent = '✅ Guardado';
+    say('Cambios guardados en este navegador.');
+  } else {
+    say('No se pudo guardar: este navegador bloquea el almacenamiento.');
+  }
+  setTimeout(() => { saveBtn.innerHTML = original; }, 1600);
+};
+
+addBtn.onclick = () => {
+  const era = prompt('Era o categoría:', (data[data.length - 1] && data[data.length - 1].era) || 'Nueva era');
+  if(era === null) return;
+  const date = prompt('Fecha:', '2026');
+  if(date === null) return;
+  const title = prompt('Título del evento:', 'Nuevo evento');
+  if(title === null) return;
+  const desc = prompt('Descripción breve:', '');
+  data.push({era: era.trim() || 'Nueva era', date: date.trim(), icon: '✨', g1: '#7a5cff', g2: '#ff9d7a', title: title.trim() || 'Nuevo evento', desc: (desc || '').trim()});
+  render();
+  const t = root.querySelector('.tl-item[data-index="' + (data.length - 1) + '"] [data-field="title"]');
+  if(t) t.focus();
+  say('Evento agregado al final de la línea del tiempo.');
+};
+
+/* ============ INICIALIZAR ============ */
+updateEditUI();
+render();
+
+/* Destellos decorativos */
+const starsWrap = document.querySelector('.stars');
+for(let i = 0; i < 28; i++){
+  const s = document.createElement('span');
+  s.style.left = Math.random() * 100 + '%';
+  s.style.bottom = (Math.random() * 20 - 10) + '%';
+  s.style.animationDuration = (6 + Math.random() * 8) + 's';
+  s.style.animationDelay = (Math.random() * 8) + 's';
+  s.style.opacity = 0.3 + Math.random() * 0.5;
+  starsWrap.appendChild(s);
+}
+</script>
+</body>
+</html>
